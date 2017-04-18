@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+    <openerp>
+
+        <data>
+
+<!---......................................................... 1 - Menu principal .........................................................-->
+
+            <menuitem
+                name="Gestion des voyages"
+                id="gestion_voyages_root"
+            />
+
+            <menuitem
+                name="Demande de mission"
+                id="gestion_voyages"
+                parent="gestion_voyages_root"
+            />
+
+<!---......................................................... 2 - Demande de mission .........................................................-->
+
+            <record model="ir.actions.act_window" id="action_demande_mission">
+            <field name="name">Demande de mission</field>
+            <field name="res_model">demande.mission</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="help" type="html">
+                    <p class="oe_view_nocontent_create">Cliquez sur créer pour faire une nouvelle demande de mission</p>
+            </field>
+        </record>
+
+                <record model="ir.ui.view" id="view_demande_mission">
+                    <field name="name">Demande de mission</field>
+                    <field name="model">demande.mission</field>
+                    <field name="view_type">form</field>
+                    <field name="arch" type="xml">
+                        <form string="Demande de mission">
+                            <header>
+
+                                <!--Brouillon-->
+
+                                <button name="action_button_confirm" states="draft" string="Soummettre la demande" type="object" class="oe_highlight"/>
+
+<!---......................................................... Approbation de la demande .........................................................-->
+
+                                <button name="validate_draft" states="confirm" string="Approuver" type="object" class="oe_highlight"/>
+                                <button name="reject_draft" states="confirm" string="Rejeter" type="object"/>
+                                <button name="put_in_draft" states="confirm" string="Mettre en brouillon" type="object"/>
+
+<!---......................................................... Première validation / Chef de services .........................................................-->
+
+                                <button name="first_validate_ask" states="first_validate" string="Valider" type="object"/>
+                                <button name="first_reject_ask" states="first_validate" string="Rejeter" type="object"/>
+
+<!---......................................................... Deuxième validation / Directeur Général .........................................................-->
+
+                                <button name="second_validate_ask" states="second_validate" string="Valider" type="object"/>
+                                <button name="second_reject_ask" states="second_validate" string="Rejeter" type="object"/>
+
+                                <!--<button name="validate" states="confirm" string="Approuver" type="object" class="oe_highlight"/>-->
+                                <!--<button name="action_cancel" states="confirm,accepted" string="Refuser" type="object"/>-->
+                                <!--<button name="draft" states="confirm,cancelled" string="Mettre en brouillon" type="object"/>-->
+                                <!--<button name="action_button_cancel" states="draft" string="Annuler la demande" type="object"/>-->
+
+                                <!--Chef Services-->
+
+                                <!--<button name="action_button_confirm_CS" states="confirmed" string="Valider" type="object"/>-->
+                                <!--<button name="action_button_reject" states="confirmed" string="Rejeter" type="object"/>-->
+                                <!--<button name="action_button_cancel" states="cancel" string="Annuler" type="object"/>-->
+
+                                <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done" statusbar_colors='{"confirm":"blue","cancelled":"red"}'/>
+                            </header>
+                            <sheet>
+                               <group>
+                                    <group>
+                                            <field name="record_date" style="font-weight:bold" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="user" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="name" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="manager_dept" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                    </group>
+                                    <group>
+                                            <field name="company_id" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="department_id" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="etiquette" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="grade" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                    </group>
+                                </group>
+                                        <group>
+                                            <field name="objet" style="font-weight:bold" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="t_transport" style="font-weight:bold" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="state_id" style="font-weight:bold"  on_change="onchange_state(state_id)" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="country_id" style="font-weight:bold" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="state_id_destination" style="font-weight:bold" on_change="onchange_state_destination(state_id_destination)" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="country_id_destination" style="font-weight:bold" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="from_date" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="final_date" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                            <field name="total_days" style="font-weight:bold"/>
+                                            <field name="diff_days" style="font-weight:bold"/>
+                                            <field name="is_editable" invisible="1"/>
+                                        </group>
+                            </sheet>
+
+                            <div class="oe_chatter">
+                                <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                                <field name="message_ids" widget="mail_thread"/>
+                            </div>
+                        </form>
+                    </field>
+            </record>
+
+            <record model="ir.ui.view" id="view_tree_demande">
+                <field name="name">Demande de mission</field>
+                <field name="model">demande.mission</field>
+                <field name="view_type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="Demande de mission">
+                        <field name="name"/>
+                        <field name="user"/>
+                        <field name="department_id"/>
+                        <field name="objet"/>
+                        <field name="state_id"/>
+                        <field name="state_id_destination"/>
+                        <field name="total_days" style="font-weight:bold"/>
+                        <field name="state"/>
+                    </tree>
+                </field>
+            </record>
+
+        <record model="ir.ui.view" id="view_search_demande">
+                <field name="name">Demande de mission</field>
+                <field name="model">demande.mission</field>
+                <field name="arch" type="xml">
+                    <search string="Chercher une mission">
+                        <filter string="Système D'Information / Informatique"  name="department_informatique"   domain="[('department_id','=','Système D'Information / Informatique')]"/>
+                        <filter string="Certification"   name="objet_certification"    domain="[('objet','=','Certification')]"/>
+                        <filter string="Formation" name="objet_formation" domain="[('objet','=','Formation')]"/>
+                        <filter string="Inspection" name="objet_inspection" domain="[('objet','=','Inspection')]"/>
+
+                        <filter string="Directeur Général"  name="state_directeur"   domain="[('state','=','Directeur Général')]"/>
+                        <filter string="Demande rejetée"   name="state_rejetée"    domain="[('state','=','Demande rejetée')]"/>
+                        <filter string="Validée" name="state_validée" domain="[('state','=','Validée')]"/>
+                        <filter string="Responsable / Chef de services" name="state_responsable" domain="[('state','=','Responsable / Chef de services')]"/>
+                        <filter string="En attente d'approbation" name="state_approbation" domain="[('state','=','En attente d'approbation')]"/>
+                        <filter string="Brouillon" name="state_brouillon" domain="[('state','=','Brouillon')]"/>
+
+                        <field name="name"/>
+                        <field name="user"/>
+                        <field name="objet"/>
+                        <field name="state"/>
+                        <group string="Group By">
+                            <filter string="Department" name="department_id" domain="[]" context="{'group_by':'department_id'}"/>
+                        </group>
+
+                        <group string="Group By">
+                            <filter string="Status" name="state" domain="[]" context="{'group_by':'state'}"/>
+                        </group>
+                    </search>
+                </field>
+            </record>
+
+        <record model="ir.ui.view" id="view_kanban_clinic">
+                <field name="name">Demande de mission</field>
+                <field name="model">demande.mission</field>
+                <field name="view_type">kanban</field>
+                <field name="arch" type="xml">
+                    <kanban>
+                        <templates>
+                            <t t-name="kanban-box">
+                                <div class="oe_module_vignette" style="background:#EEE">
+                                    <div class="oe_module_desc">
+                                        <h2>
+                                            <a type="edit"><field name="objet"/></a>
+                                        </h2>
+                                            <ul>
+                                                <li>
+                                                    <strong>Nom : </strong><field name="name"/>
+                                                    <br/>
+                                                    <strong>Utilisateur : </strong><field name="user"/>
+                                                    <br/>
+                                                    <strong>Département : </strong><field name="department_id"/>
+                                                    <br/>
+                                                    <strong>Ville de départ : </strong><field name="state_id"/>
+                                                    <br/>
+                                                    <strong>Ville d'arrivé : </strong><field name="state_id_destination"/>
+                                                    <strong>Status : </strong><field name="state"/>
+                                                </li>
+                                            </ul>
+                                    </div>
+                                </div>
+                            </t>
+                        </templates>
+                    </kanban>
+                </field>
+            </record>
+
+            <!--FIN-->
+
+            <!--<record id="mt_task_assigned" model="mail.message.subtype">-->
+                <!--<field name="name">Task Assigned</field>-->
+                <!--<field name="res_model">project.task</field>-->
+                <!--<field name="default" eval="False"/>-->
+            <!--</record>-->
+
+            <menuitem
+                name="Demande de mission"
+                id="demande_mission"
+                parent="gestion_voyages"
+                action="action_demande_mission"
+                sequence="1"
+            />
+
+            <!--Mission et Caracteristiques de mission-->
+
+            <record model="ir.actions.act_window" id="action_mission">
+                <field name="name">Missions</field>
+                <field name="res_model">type.mission</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form,kanban</field>
+                <field name="help" type="html">
+                        <p class="oe_view_nocontent_create">Cliquez sur créer pour ajouter une nouvelle mission</p>
+                </field>
+            </record>
+
+                <record model="ir.ui.view" id="view_mission">
+                        <field name="name">Missions</field>
+                        <field name="model">type.mission</field>
+                        <field name="view_type">form</field>
+                        <field name="arch" type="xml">
+                            <form string="Mission">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="departement_id" readonly="1"/>
+                                            <field name="description" placeholder="Entrer une description de la mission"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                </record>
+
+                <record model="ir.ui.view" id="view_tree_mission">
+                    <field name="name">Mission</field>
+                    <field name="model">type.mission</field>
+                    <field name="view_type">tree</field>
+                    <field name="arch" type="xml">
+                        <tree string="Mission">
+                            <field name="name"/>
+                            <field name="departement_id"/>
+                        </tree>
+                    </field>
+                </record>
+
+            <menuitem
+                name="Type de mission"
+                id="missions"
+                parent="gestion_voyages"
+                action="action_mission"
+                sequence="2"
+            />
+
+<!---......................................................... 3 - Réservations des billets d'avions .........................................................-->
+
+        </data>
+
+    </openerp>
