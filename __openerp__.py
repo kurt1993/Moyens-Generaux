@@ -25,7 +25,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/voyage_view.xml', 'views/warning_view.xml',
+        'views/voyage_view.xml', 'views/reject_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

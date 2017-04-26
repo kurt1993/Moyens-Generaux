@@ -95,10 +95,34 @@
                                             <field name="country_id_destination" style="font-weight:bold" attrs="{'readonly': [('is_editable','=', False)]}"/>
                                             <field name="from_date" attrs="{'readonly': [('is_editable','=', False)]}"/>
                                             <field name="final_date" attrs="{'readonly': [('is_editable','=', False)]}"/>
-                                            <field name="total_days" style="font-weight:bold"/>
-                                            <field name="diff_days" style="font-weight:bold"/>
+                                            <field name="total_days" style="font-weight:bold" invisible="1"/>
+                                            <field name="diff_days" style="font-weight:bold" invisible="1"/>
                                             <field name="is_editable" invisible="1"/>
                                         </group>
+                                        <notebook>
+                                                <page string="Documents">
+                                                    <field name="documents" widget="many2many_kanban"  attrs="{'readonly': [('is_editable','=', False)]}">
+                                                        <kanban quick_create="false" create="true" delete="true">
+                                                            <templates>
+                                                                <t t-name="kanban-box">
+                                                                    <div style="position: relative">
+                                                                        <a t-if="! read_only_mode" type="delete" style="position: absolute; right: 0; padding: 4px; diplay: inline-block">X</a>
+                                                                        <div class="oe_module_vignette">
+                                                                           <img t-att-src='_s + "/voyage_module/static/src/img/docs.png"' class="oe_avatar oe_kanban_avatar_smallbox"/>
+                                                                            <div class="oe_module_desc">
+                                                                                <!-- <field name="datas"/> -->
+                                                                                <a type="open">
+                                                                                    <field name="datas_fname"/>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </t>
+                                                            </templates>
+                                                        </kanban>
+                                                    </field>
+                                                </page>
+                                        </notebook>
                             </sheet>
 
                             <div class="oe_chatter">
@@ -260,6 +284,57 @@
                 action="action_mission"
                 sequence="2"
             />
+
+
+
+            <!-- Type de transport -->
+
+            <record model="ir.actions.act_window" id="action_transport">
+                <field name="name">Transport</field>
+                <field name="res_model">type.transport</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form,kanban</field>
+                <field name="help" type="html">
+                        <p class="oe_view_nocontent_create">Cliquez sur créer pour ajouter un type de transport</p>
+                </field>
+            </record>
+
+                <record model="ir.ui.view" id="view_transport">
+                        <field name="name">Tranport</field>
+                        <field name="model">type.transport</field>
+                        <field name="view_type">form</field>
+                        <field name="arch" type="xml">
+                            <form string="Transport">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                </record>
+
+                <record model="ir.ui.view" id="view_tree_transport">
+                    <field name="name">Transport</field>
+                    <field name="model">type.transport</field>
+                    <field name="view_type">tree</field>
+                    <field name="arch" type="xml">
+                        <tree string="Mission">
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </record>
+
+            <!--<menuitem-->
+                <!--name="Type de transport"-->
+                <!--id="transport"-->
+                <!--parent="gestion_voyages"-->
+                <!--action="action_transport"-->
+                <!--sequence="3"-->
+            <!--/>-->
+
 
 <!---......................................................... 3 - Réservations des billets d'avions .........................................................-->
 

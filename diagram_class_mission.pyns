@@ -1,0 +1,7 @@
+# PynSource Version 1.1
+{'type':'meta', 'info1':'Lorem ipsum dolor sit amet, consectetur adipiscing elit is latin.'}
+{'type':'umlshape', 'id':'voyage_demande_mission', 'x':1274, 'y':28, 'width':411, 'height':823, 'attrs':'_name|_inherit|total_days|diff_days|_track|state|record_date|name|company_id|user|manager_dept|department_id|etiquette|grade|objet|state_id|country_id|state_id_destination|country_id_destination|from_date|final_date|t_transport|is_editable|motif_reject', 'meths':'_get_current_user|_get_current_dep|_get_current_job|_get_current_parent|_get_current_category|_get_current_company_country|expense_canceled|_get_datetime_ask|calculate_date|validate_date|onchange_state|onchange_state_destination|_compute_is_editable|action_button_confirm|validate_draft|reject_draft|put_in_draft|first_validate_ask|first_reject_ask|second_validate_ask|second_reject_ask'}
+{'type':'umlshape', 'id':'type_mission', 'x':225, 'y':352, 'width':230, 'height':175, 'attrs':'_name|name|departement_id|description', 'meths':'_get_current_dep'}
+{'type':'umlshape', 'id':'models.Model', 'x':759, 'y':425, 'width':142, 'height':31, 'attrs':'', 'meths':''}
+{'type':'edge', 'id':'voyage_demande_mission_to_models.Model', 'source':'voyage_demande_mission', 'target':'models.Model', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'type_mission_to_models.Model', 'source':'type_mission', 'target':'models.Model', 'uml_edge_type':'generalisation'}

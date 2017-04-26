@@ -21,6 +21,14 @@ class voyage_demande_mission(models.Model):
         return self.env['res.users'].browse(self.env.uid)
 
     @api.model
+    def _get_job_position(self, cr, uid, ids, context=None):
+        res = []
+        for employee in self.pool.get('hr.employee').browse(cr, uid, ids, context=context):
+            if employee.job_id:
+                res.append(employee.job_id.id)
+        return res
+
+    @api.model
     def _get_current_dep(self):
         current_user = self.env['res.users'].browse(self.env.uid)
         current_emp = self.env['hr.employee'].search([('user_id', '=', current_user.id)])
@@ -105,7 +113,7 @@ class voyage_demande_mission(models.Model):
                  'company_id', 'user', 'manager_dept',
                  'department_id', 'etiquette', 'grade', 'objet', 'state_id', 'country_id',
                  'state_id_destination', 'country_id_destination', 'from_date', 'final_date',
-                 'total_days', 'diff_days', 't_transport')
+                 'total_days', 'diff_days', 't_transport', 'documents')
     def _compute_is_editable(self):
         for rec in self:
             if rec.state in ('confirm', 'cancel', 'first_validate', 'second_validate', 'cancelled', 'done'):
@@ -197,7 +205,7 @@ class voyage_demande_mission(models.Model):
     @api.multi
     def first_reject_ask(self):
         self.state = 'cancelled'
-        return self.env['reject'].info(title='Motif du rejet', message="Donner le motif du rejet", ask_mission_id=self.ids[0])
+        return self.env['info'].info(title='Motif du rejet', message="Donner le motif du rejet", demande_id=self.ids[0])
 
     @api.multi
     def second_validate_ask(self):
@@ -207,11 +215,11 @@ class voyage_demande_mission(models.Model):
     @api.multi
     def second_reject_ask(self):
         self.state = 'cancelled'
-        return self.env['reject'].info(title='Motif du rejet', message="Donner le motif du rejet", ask_mission_id=self.ids[0])
+        return self.env['info'].info(title='Motif du rejet', message="Donner le motif du rejet", demande_id=self.ids[0])
 
     record_date = fields.Date(string=u"Date", default=_get_datetime_ask, readonly=False, track_visibility='onchange')
 
-    diff_days = fields.Integer(string=u"Différence de date", readonly=False, track_visibility='onchange')
+    diff_days = fields.Integer(string=u"Durée", readonly=False, track_visibility='onchange')
 
     name = fields.Many2one(comodel_name='hr.employee', string=u"Nom de l'employé", default=lambda self: self.env.user.id, store=True, readonly=False, track_visibility='onchange')
 
@@ -245,7 +253,11 @@ class voyage_demande_mission(models.Model):
 
     total_days = fields.Integer(string=u"Durée (/Jours) :", store=True, readonly=False)
 
-    t_transport = fields.Selection(((('1','Avion'), ('2','Bateau'), ('3','Voiture'))), default='1', string="Type de transport", required=True, readonly=False)
+    # t_transport = fields.Selection(((('1','Avion'), ('2','Bateau'), ('3','Voiture'))), default='1', string="Type de transport", required=True, readonly=False)
+
+    t_transport = fields.Many2one(comodel_name='type.transport', string=u"Type de transport", required=True, readonly=False)
+
+    documents = fields.Many2many(comodel_name='ir.attachment', string=u"Joindre un document", required=True, readonly=False, track_visibility='onchange')
 
     is_editable = fields.Boolean(string="Is editable", compute="_compute_is_editable", readonly=True)
 
@@ -273,4 +285,12 @@ class type_mission(models.Model):
 
     description = fields.Text(string=u"Description", required=True)
 
+
+# ---------------------------------------------- Type de transport -----------------------------------------------------
+
+class type_transport(models.Model):
+
+    _name = "type.transport"
+
+    name = fields.Char(string=u'Type de transport', required=True)
 
